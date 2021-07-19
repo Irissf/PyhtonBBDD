@@ -7,7 +7,7 @@ miCursor = miConexion.cursor() #statement
 miCursor.execute('''
     create table productos(
         id integer primary key autoincrement,
-        nombre_articulo varchar(50),
+        nombre_articulo varchar(50) unique,
         precio integer,
         seccion varchar(20))
 ''')
