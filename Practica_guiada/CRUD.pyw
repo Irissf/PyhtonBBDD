@@ -54,6 +54,47 @@ def crearRegistro():
     miConexion.commit()
     messagebox.showinfo("BBDD", "Registro insertado con éxito")
 
+def leerRegistro():
+    miConexion = sqlite3.connect("Practica_guiada/Usuarios")
+    miCursor = miConexion.cursor()
+    
+    miCursor.execute("select * from datosusuario where id="+miId.get())
+    usuarioDatos = miCursor.fetchall()
+    for usuario in usuarioDatos:
+        #en 0 está el id, en 1 el nombre...
+        miId.set(usuario[0])
+        miNombre.set(usuario[1])
+        miPass.set(usuario[2])
+        miApellido.set(usuario[3])
+        miDireccion.set(usuario[4])
+        textoCOmentario.insert(1.0,usuario[5])
+
+    miConexion.commit()
+
+def modificarRegistro():
+    miConexion = sqlite3.connect("Practica_guiada/Usuarios")
+    miCursor = miConexion.cursor()
+
+    miCursor.execute("update datosusuario set nombre_usuario= '"+miNombre.get()+
+        "', password='" +miPass.get() +
+        "', apellido='" +miApellido.get() +
+        "', direccion='" + miDireccion.get()+
+        "', comentarios='" + textoCOmentario.get("1.0", END) +
+        "' where id="+miId.get())
+
+    miConexion.commit()
+    messagebox.showinfo("BBDD", "Registro modificado")
+
+def borrarRegistro():
+    miConexion = sqlite3.connect("Practica_guiada/Usuarios")
+    miCursor = miConexion.cursor()
+
+    miCursor.execute("delete from datosusuario where id="+miId.get())
+
+    miConexion.commit()
+
+    messagebox.showinfo("BBDD","Registro eliminado")
+
 #---------------------------MENU---------------------------------
 barraMenu = Menu(root)
 root.config(menu = barraMenu, width=300,height=300)
@@ -67,9 +108,9 @@ borrarMenu.add_command(label="Borrar campos", command=limpiarCmpos)
 
 crudMenu = Menu(barraMenu, tearoff=0)
 crudMenu.add_command(label="Crear", command=crearRegistro)
-crudMenu.add_command(label="Leer")
-crudMenu.add_command(label="Actualizar")
-crudMenu.add_command(label="Borrar")
+crudMenu.add_command(label="Leer", command=leerRegistro)
+crudMenu.add_command(label="Actualizar", command=modificarRegistro)
+crudMenu.add_command(label="Borrar", command=borrarRegistro)
 
 ayudaMenu = Menu(barraMenu, tearoff=0)
 ayudaMenu.add_command(label="Licencia")
@@ -77,7 +118,7 @@ ayudaMenu.add_command(label="Acerca de")
 
 barraMenu.add_cascade(label="BBDD",menu=bbddMenu)
 barraMenu.add_cascade(label="Borrar",menu=borrarMenu)
-barraMenu.add_cascade(label="CRUD",menu=ayudaMenu)
+barraMenu.add_cascade(label="CRUD",menu=crudMenu)
 barraMenu.add_cascade(label="Ayuda",menu=ayudaMenu)
 
 #---------------------------FORMULARIO----------------------------
@@ -134,13 +175,13 @@ frameBotones.pack()
 botonCrear = Button(frameBotones, text="Crear", command=crearRegistro)
 botonCrear.grid(row=0, column=0,sticky="e", padx=10, pady=10)
 
-botonLeer = Button(frameBotones, text="Leer")
+botonLeer = Button(frameBotones, text="Leer", command=leerRegistro)
 botonLeer.grid(row=0, column=1,sticky="e", padx=10, pady=10)
 
-botonActualizar = Button(frameBotones, text="Actualizar")
+botonActualizar = Button(frameBotones, text="Actualizar",command=modificarRegistro)
 botonActualizar.grid(row=0, column=2,sticky="e", padx=10, pady=10)
 
-botonBorrar = Button(frameBotones, text="Borrar")
+botonBorrar = Button(frameBotones, text="Borrar", command=borrarRegistro)
 botonBorrar.grid(row=0, column=3,sticky="e", padx=10, pady=10)
 
 
